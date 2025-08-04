@@ -165,6 +165,19 @@ Install all dependencies with:
 uv pip install -r requirements.txt
 ```
 
+### Better way to manage libraries using uv
+
+```zsh
+uv init
+``` 
+it creates the pyproject.toml file
+
+```zsh
+uv add <add each library in requirements.txt>
+uv lock
+uv pip freeze > requiremnets-dev.txt
+``` 
+
 
 ## Star History
 
