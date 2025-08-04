@@ -1,3 +1,5 @@
+#%%
+
 import os
 from typing import TypedDict, List, Union
 from langchain_core.messages import HumanMessage, AIMessage
@@ -5,12 +7,31 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START, END
 from dotenv import load_dotenv
 
+import groq
+from groq import Groq
+from langchain_groq import ChatGroq
+import os
+from langchain_mistralai import MistralAIEmbeddings
+
+from langchain_community.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_chroma import Chroma
+from langchain_core.tools import tool
+
 load_dotenv()
 
+groq_api_key = os.getenv("GROQ_API_KEY")
+mistral_api_key = os.getenv("MISTRAL_API_KEY")
+#%%
 class AgentState(TypedDict):
     messages: List[Union[HumanMessage, AIMessage]]
 
-llm = ChatOpenAI(model="gpt-4o")
+llm = ChatGroq(model="llama3-8b-8192",
+    temperature=0,
+    max_tokens=None,
+    timeout=None,
+    max_retries=2,
+    verbose=1)
 
 def process(state: AgentState) -> AgentState:
     """This node will solve the request you input"""
@@ -28,7 +49,7 @@ graph.add_edge(START, "process")
 graph.add_edge("process", END) 
 agent = graph.compile()
 
-
+#%%
 conversation_history = []
 
 user_input = input("Enter: ")

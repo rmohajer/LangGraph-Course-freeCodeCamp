@@ -1,13 +1,48 @@
 Your Conversation Log:
-You: Hi I am steve
-AI: Hello Steve! How can I assist you today?
+You: what's the capital of Turkiye?
+AI: The capital of Turkey is Ankara.
 
-You: good mornign
-AI: Good morning! How's your day going so far?
+You: How should I nail the Agentic AI engineer role interview
+AI: Congratulations on landing an interview for the Agentic AI Engineer role! To help you prepare, I've outlined some key areas to focus on:
 
-You: tell me a joke
-AI: Sure! Why don't skeletons fight each other?
+**Before the Interview:**
 
-They don't have the guts.
+1. **Review the job description**: Study the job requirements, responsibilities, and skills listed. Make sure you understand the company's needs and how your skills align with them.
+2. **Prepare your portfolio**: Gather examples of your previous work, such as projects, code snippets, or research papers. This will help demonstrate your skills and experience.
+3. **Brush up on AI and ML concepts**: Familiarize yourself with popular AI and ML frameworks, libraries, and tools, such as TensorFlow, PyTorch, Keras, or scikit-learn.
+4. **Practice coding**: Prepare to write code during the interview. Choose a programming language relevant to the job, such as Python, Java, or C++.
+
+**During the Interview:**
+
+1. **Introduction and background**: Be prepared to introduce yourself, your background, and your experience in AI and ML.
+2. **Technical questions**: Be ready to answer technical questions related to AI, ML, and software engineering. Some common topics include:
+	* Machine learning algorithms (e.g., supervised, unsupervised, reinforcement learning)
+	* Deep learning architectures (e.g., CNNs, RNNs, Transformers)
+	* Natural Language Processing (NLP) techniques
+	* Computer Vision concepts
+	* Data preprocessing and feature engineering
+3. **Design and problem-solving**: Be prepared to design and implement a solution to a problem or scenario presented during the interview. This could involve:
+	* Designing a neural network architecture
+	* Implementing a recommendation system
+	* Developing a chatbot
+4. **Behavioral questions**: Be prepared to answer questions about your experience working in a team, handling conflicts, and adapting to new technologies.
+5. **Code challenges**: Be prepared to write code during the interview. This could involve solving a problem, implementing a specific algorithm, or completing a coding challenge.
+
+**Tips and Tricks:**
+
+1. **Be honest and transparent**: If you're unsure about a question or concept, it's okay to say so. Show your thought process and willingness to learn.
+2. **Show enthusiasm and passion**: Demonstrate your passion for AI, ML, and software engineering. Share your experiences, projects, and achievements.
+3. **Highlight your transferable skills**: Even if you don't have direct experience in AI or ML, highlight your skills in other areas, such as data analysis, programming, or problem-solving.
+4. **Prepare to ask questions**: Come prepared with thoughtful questions about the company, the role, and the project. This shows your interest and willingness to learn.
+5. **Practice, practice, practice**: Practice coding, solving problems, and answering technical questions. This will help you feel more confident and prepared during the interview.
+
+**Additional Resources:**
+
+1. **LeetCode**: Practice coding challenges and interview questions on LeetCode.
+2. **Kaggle**: Participate in Kaggle competitions and learn from others' solutions.
+3. **AI and ML tutorials**: Review tutorials and courses on AI and ML concepts, such as Andrew Ng's Machine Learning course on Coursera.
+4. **Interview preparation resources**: Utilize resources like Glassdoor, Indeed, or LinkedIn to find interview questions and tips specific to the Agentic AI Engineer role.
+
+Remember to stay calm, be yourself, and show your passion for AI, ML, and software engineering. Good luck with your interview!
 
 End of Conversation
