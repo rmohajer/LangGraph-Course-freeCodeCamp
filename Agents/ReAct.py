@@ -114,69 +114,6 @@ app = builder.compile()
 
 #%%
 
-def run_agent_loop(user_input: str) -> AgentState:
-    # Initialize state with user message
-    state: AgentState = {"messages": []}
-    system_prompt = SystemMessage(content="You are my AI assistant, please answer my query to the best of your ability.")
-    user_msg = BaseMessage(role="user", content=user_input)  # adapt to your actual BaseMessage constructor
-    state["messages"].append(user_msg)
-
-    while True:
-        # Invoke model with accumulated history (system + conversation)
-        messages = [system_prompt] + list(state["messages"])
-        response: BaseMessage = model.invoke(messages)  # this may contain tool_calls
-        state["messages"].append(response)
-
-        # If no tool calls, we're done
-        if not getattr(response, "tool_calls", None):
-            break
-
-        # Sequentially execute each tool call the model asked for
-        for call in response.tool_calls:
-            func_name = call.function.name
-            func = tool_map.get(func_name)
-            if not func:
-                # unknown tool; inject an error result and continue
-                tool_result_msg = ToolResultMessage(
-                    tool_call=call,
-                    result=f"Error: unknown tool '{func_name}'"
-                )
-                state["messages"].append(tool_result_msg)
-                continue
-
-            # Resolve parameters: if any parameter is a reference to a prior tool result, unwrap it
-            resolved_params = {}
-            for k, v in call.parameters.items():
-                if isinstance(v, dict) and "id" in v:
-                    # find the tool result message with matching id
-                    referenced = next(
-                        (m for m in state["messages"]
-                         if getattr(m, "id", None) == v["id"] and hasattr(m, "result")),
-                        None,
-                    )
-                    if referenced:
-                        resolved_params[k] = getattr(referenced, "result")
-                    else:
-                        resolved_params[k] = v  # fallback, leave as-is
-                else:
-                    resolved_params[k] = v
-
-            # Execute the tool safely
-            try:
-                result = func(**resolved_params)
-            except Exception as e:
-                result = f"Error executing {func_name}: {e}"
-
-            # Wrap and append the tool result so the LLM can see it in the next turn
-            tool_result_msg = ToolResultMessage(tool_call=call, result=result)
-            state["messages"].append(tool_result_msg)
-
-        # Loop: model will be invoked again to consume tool results
-        # continue until no more tool_calls
-
-    return state
-#%%
-
 def print_stream(stream):
     for s in stream:
         message = s["messages"][-1]
