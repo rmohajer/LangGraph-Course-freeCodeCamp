@@ -1,3 +1,4 @@
+#%%
 from dotenv import load_dotenv
 import os
 from langgraph.graph import StateGraph, END
@@ -5,7 +6,14 @@ from typing import TypedDict, Annotated, Sequence
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, ToolMessage
 from operator import add as add_messages
 from langchain_openai import ChatOpenAI
+import groq
+from groq import Groq
+from langchain_groq import ChatGroq
+import os
 from langchain_openai import OpenAIEmbeddings
+from langchain_ollama import OllamaEmbeddings
+from langchain_mistralai import MistralAIEmbeddings
+
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
@@ -13,17 +21,50 @@ from langchain_core.tools import tool
 
 load_dotenv()
 
-llm = ChatOpenAI(
-    model="gpt-4o", temperature = 0) # I want to minimize hallucination - temperature = 0 makes the model output more deterministic 
+groq_api_key = os.getenv("GROQ_API_KEY")
+mistral_api_key = os.getenv("MISTRAL_API_KEY")
+
+#%%
+
+llm = ChatGroq(model="llama3-8b-8192",
+    temperature=0,
+    max_tokens=None,
+    timeout=None,
+    max_retries=2)
 
 # Our Embedding Model - has to also be compatible with the LLM
-embeddings = OpenAIEmbeddings(
-    model="text-embedding-3-small",
+
+embeddings = MistralAIEmbeddings(
+    model="mistral-embed",
 )
 
+#%% Test the LLM and Embeddings
+
+
+# Create a vector store with a sample text
+from langchain_core.vectorstores import InMemoryVectorStore
+
+text = "LangChain is the framework for building context-aware reasoning applications"
+
+vectorstore = InMemoryVectorStore.from_texts(
+    [text],
+    embedding=embeddings,
+)
+
+# Use the vectorstore as a retriever
+retriever = vectorstore.as_retriever()
+
+# Retrieve the most similar text
+retrieved_documents = retriever.invoke("What is LangChain?")
+
+# show the retrieved document's content
+retrieved_documents[0].page_content
+
+
+
+#%% # Load the PDF document
 
 pdf_path = "Stock_Market_Performance_2024.pdf"
-
 
 # Safety measure I have put for debugging purposes :)
 if not os.path.exists(pdf_path):
@@ -48,7 +89,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 
 pages_split = text_splitter.split_documents(pages) # We now apply this to our pages
 
-persist_directory = r"C:\Vaibhav\LangGraph_Book\LangGraphCourse\Agents"
+persist_directory = "Chroma_db"
 collection_name = "stock_market"
 
 # If our collection does not exist in the directory, we create using the os command
@@ -76,6 +117,10 @@ retriever = vectorstore.as_retriever(
     search_type="similarity",
     search_kwargs={"k": 5} # K is the amount of chunks to return
 )
+
+#%% 
+# Define the tool that will use the retriever to answer questions
+
 
 @tool
 def retriever_tool(query: str) -> str:
@@ -108,6 +153,8 @@ def should_continue(state: AgentState):
     result = state['messages'][-1]
     return hasattr(result, 'tool_calls') and len(result.tool_calls) > 0
 
+#%% 
+# Define the system prompt for the agent
 
 system_prompt = """
 You are an intelligent AI assistant who answers questions about Stock Market Performance in 2024 based on the PDF document loaded into your knowledge base.
@@ -167,12 +214,16 @@ graph.set_entry_point("llm")
 
 rag_agent = graph.compile()
 
+#%%
+
 
 def running_agent():
     print("\n=== RAG AGENT===")
     
     while True:
-        user_input = input("\nWhat is your question: ")
+        # user_input = "How was the performance of the US stock market in 2024?
+        
+        user_input =  input("\nWhat is your question: ")
         if user_input.lower() in ['exit', 'quit']:
             break
             
@@ -184,4 +235,6 @@ def running_agent():
         print(result['messages'][-1].content)
 
 
+
 running_agent()
+# %%
